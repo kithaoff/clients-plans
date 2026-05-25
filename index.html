@@ -33,24 +33,12 @@
     <script>
         async function loadPlan() {
             const app = document.getElementById('app');
-            let data = null;
-            
-            // المحاولة الأولى: قراءة الملف المحلي المباشر
             try {
-                const response = await fetch('final_plan.json');
-                if (response.ok) data = await response.json();
-            } catch (e) {}
-
-            // المحاولة الثانية (الاحتياطية الاستراتيجية): إذا فشل الأول، يقرأ من مسار الـ api مباشرة لتخطي الكاش
-            if (!data) {
-                try {
-                    const response = await fetch('/api/final_plan.json');
-                    if (response.ok) data = await response.json();
-                } catch (e) {}
-            }
-
-            // عرض البيانات فوراً عند العثور عليها
-            if (data) {
+                // استدعاء مباشر كلياً للملف المرفوع في نفس المجلد لضمان قراءته في Vercel
+                const response = await fetch('./final_plan.json');
+                if (!response.ok) throw new Error();
+                const data = await response.json();
+                
                 let htmlContent = `
                     <header>
                         <h1>خارطة طريقكِ الصحية والرياضية</h1>
@@ -58,7 +46,9 @@
                     </header>
                 `;
 
-                const planText = data.text || data.output || data.result || JSON.stringify(data, null, 2);
+                // استخراج النص بذكاء مهما كان الهيكل المرفوع
+                const planText = data.text || data.output || data.result || (data.choices && data.choices[0]?.message?.content) || JSON.stringify(data, null, 2);
+                
                 htmlContent += `
                     <div class="card">
                         <div class="card-title">تفاصيل خطتكِ الشاملة والمخصصة</div>
@@ -66,8 +56,8 @@
                     </div>
                 `;
                 app.innerHTML = htmlContent;
-            } else {
-                app.innerHTML = `<div style="background: #fff5f5; color: #c53030; padding: 20px; border-radius: 15px; text-align: center; font-weight: 700;">⚙️ الواجهة آمنة 100%! جاري مزامنة ملف الخطة والبيانات الحية الآن على السيرفر... يرجى الانتظار ثوانٍ وعمل تحديث للموقع!</div>`;
+            } catch (error) {
+                app.innerHTML = `<div style="background: #fff5f5; color: #c53030; padding: 20px; border-radius: 15px; text-align: center; font-weight: 700;">⚙️ لم يتم العثور على ملف البيانات الحية final_plan.json في المستودع الرئيسي، تأكدي من تسمية الملف بالملي!</div>`;
             }
         }
         window.addEventListener('DOMContentLoaded', loadPlan);
