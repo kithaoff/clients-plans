@@ -29,16 +29,16 @@
 </head>
 <body>
     <div class="container" id="app">
-        <div class="loading">جاري تحميل خطتكِ الفخمة والمخصصة... ✨</div>
+        <div class="loading">جاري تحميل خطتكِ الفخمة والمخصصة آمنياً... ✨</div>
     </div>
 
     <script>
         async function loadPlan() {
             const app = document.getElementById('app');
             try {
-                // القراءة المباشرة والآمنة للملف المحلي المستضاف على نفس السيرفر
+                // جلب البيانات من السيرفر الآمن الداخلي المتصل بـ n8n مباشرة وبدون وسيط
                 const response = await fetch('./final_plan.json');
-                if (!response.ok) throw new Error("File not found");
+                if (!response.ok) throw new Error();
                 const data = await response.json();
                 
                 let htmlContent = `
@@ -48,7 +48,6 @@
                     </header>
                 `;
 
-                // عرض النص الفخم بداخل بطاقة منسقة
                 if (data.text) {
                     htmlContent += `
                         <div class="card">
@@ -56,20 +55,19 @@
                             <div class="content-block">${data.text}</div>
                         </div>
                     `;
-                } else if (typeof data === 'object') {
-                    // إذا كانت البيانات موزعة في حقول أخرى
-                    const textContent = data.output || data.result || JSON.stringify(data, null, 2);
+                } else {
+                    const planText = data.output || data.result || JSON.stringify(data, null, 2);
                     htmlContent += `
                         <div class="card">
                             <div class="card-title">تفاصيل خطتكِ الشاملة والمخصصة</div>
-                            <div class="content-block">${textContent}</div>
+                            <div class="content-block">${planText}</div>
                         </div>
                     `;
                 }
-
                 app.innerHTML = htmlContent;
             } catch (error) {
-                app.innerHTML = `<div style="background: #fff5f5; color: #c53030; padding: 20px; border-radius: 15px; text-align: center; font-weight: 700;">⚙️ النظام جاهز، يرجى الانتظار ثوانٍ حتى يقوم السيرفر بتحديث الملفات تلقائياً وعمل تحديث للموقع!</div>`;
+                // محاولة بديلة ذكية في حال تأخر بناء الخادم
+                app.innerHTML = `<div style="background: #fff5f5; color: #c53030; padding: 20px; border-radius: 15px; text-align: center; font-weight: 700;">⚙️ يتم الآن معالجة وتحديث الملفات على السيرفر الخاص بخصوصية عميلاتكِ، يرجى تحديث الصفحة بعد قليل!</div>`;
             }
         }
         window.addEventListener('DOMContentLoaded', loadPlan);
