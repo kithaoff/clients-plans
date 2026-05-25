@@ -23,9 +23,8 @@
         header p { font-size: 14px; color: #e0e0e0; }
         .card { background: var(--card-bg); border-radius: 20px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #edf2f7; }
         .card-title { font-size: 18px; font-weight: 700; color: var(--secondary); margin-bottom: 15px; border-bottom: 2px solid #f0f2f5; padding-bottom: 8px; }
-        .content-block { font-size: 15px; white-space: pre-line; color: #4a4a4a; }
+        .content-block { font-size: 15px; white-space: pre-line; color: #4a4a4a; font-weight: 600; }
         .loading { text-align: center; padding: 50px; font-size: 18px; font-weight: 700; color: var(--text-muted); }
-        .error-msg { background: #fff5f5; color: #c53030; padding: 20px; border-radius: 15px; text-align: center; font-weight: 700; border: 1px solid #fed7d7; }
     </style>
 </head>
 <body>
@@ -37,9 +36,9 @@
         async function loadPlan() {
             const app = document.getElementById('app');
             try {
-                // سحب البيانات مباشرة من الملف الذي تم توليده بواسطة n8n
-                const response = await fetch('final_plan.json');
-                if (!response.ok) throw new Error();
+                // القراءة المباشرة والآمنة للملف المحلي المستضاف على نفس السيرفر
+                const response = await fetch('./final_plan.json');
+                if (!response.ok) throw new Error("File not found");
                 const data = await response.json();
                 
                 let htmlContent = `
@@ -49,25 +48,28 @@
                     </header>
                 `;
 
+                // عرض النص الفخم بداخل بطاقة منسقة
                 if (data.text) {
                     htmlContent += `
                         <div class="card">
-                            <div class="card-title">تفاصيل الخطة الشاملة الخاصة بكِ</div>
+                            <div class="card-title">تفاصيل خطتكِ الشاملة والمخصصة</div>
                             <div class="content-block">${data.text}</div>
                         </div>
                     `;
-                } else {
+                } else if (typeof data === 'object') {
+                    // إذا كانت البيانات موزعة في حقول أخرى
+                    const textContent = data.output || data.result || JSON.stringify(data, null, 2);
                     htmlContent += `
                         <div class="card">
-                            <div class="card-title">تفاصيل خطتكِ الغذائية والرياضية</div>
-                            <div class="content-block">${JSON.stringify(data, null, 2)}</div>
+                            <div class="card-title">تفاصيل خطتكِ الشاملة والمخصصة</div>
+                            <div class="content-block">${textContent}</div>
                         </div>
                     `;
                 }
 
                 app.innerHTML = htmlContent;
             } catch (error) {
-                app.innerHTML = `<div class="error-msg">✨ تم رفع وتأمين بياناتكِ بنجاح! جاري تهيئة الواجهة بالكامل لعرضها، يرجى تحديث الصفحة بعد ثوانٍ قليلة!</div>`;
+                app.innerHTML = `<div style="background: #fff5f5; color: #c53030; padding: 20px; border-radius: 15px; text-align: center; font-weight: 700;">⚙️ النظام جاهز، يرجى الانتظار ثوانٍ حتى يقوم السيرفر بتحديث الملفات تلقائياً وعمل تحديث للموقع!</div>`;
             }
         }
         window.addEventListener('DOMContentLoaded', loadPlan);
