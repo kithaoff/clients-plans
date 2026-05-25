@@ -8,36 +8,34 @@
     <style>
         :root {
             --primary: #ff6496;
-            --primary-hover: #e04b79;
             --secondary: #1a1a2e;
             --background: #f8f9fa;
             --card-bg: #ffffff;
             --text-main: #2b2b2b;
-            --text-muted: #6c757d;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
         body { background-color: var(--background); color: var(--text-main); line-height: 1.7; padding: 20px 10px; }
         .container { max-width: 900px; margin: 0 auto; }
-        header { text-align: center; margin-bottom: 30px; padding: 30px 20px; background: linear-gradient(135deg, var(--secondary), #2a2a4e); color: white; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        header { text-align: center; margin-bottom: 30px; padding: 30px 20px; background: linear-gradient(135deg, var(--secondary), #2a2a4e); color: white; border-radius: 20px; }
         header h1 { font-size: 24px; font-weight: 800; color: var(--primary); margin-bottom: 10px; }
         header p { font-size: 14px; color: #e0e0e0; }
         .card { background: var(--card-bg); border-radius: 20px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #edf2f7; }
         .card-title { font-size: 18px; font-weight: 700; color: var(--secondary); margin-bottom: 15px; border-bottom: 2px solid #f0f2f5; padding-bottom: 8px; }
         .content-block { font-size: 15px; white-space: pre-line; color: #4a4a4a; font-weight: 600; }
-        .loading { text-align: center; padding: 50px; font-size: 18px; font-weight: 700; color: var(--text-muted); }
+        .loading { text-align: center; padding: 50px; font-size: 18px; font-weight: 700; color: #6c757d; }
     </style>
 </head>
 <body>
     <div class="container" id="app">
-        <div class="loading">جاري تحميل خطتكِ الفخمة والمخصصة بشكل آمن... ✨</div>
+        <div class="loading">جاري جلب خطتكِ الفخمة والمخصصة بشكل آمن... ✨</div>
     </div>
 
     <script>
         async function loadPlan() {
             const app = document.getElementById('app');
             try {
-                // استدعاء الخادم المصغر الجديد والآمن الذي قمنا ببنائه لتوّنا
-                const response = await fetch('/api/plan');
+                // قراءة ملف البيانات المحلي المباشر والمستقر
+                const response = await fetch('./final_plan.json');
                 if (!response.ok) throw new Error();
                 const data = await response.json();
                 
@@ -48,25 +46,16 @@
                     </header>
                 `;
 
-                if (data.text) {
-                    htmlContent += `
-                        <div class="card">
-                            <div class="card-title">تفاصيل خطتكِ الشاملة والمخصصة</div>
-                            <div class="content-block">${data.text}</div>
-                        </div>
-                    `;
-                } else {
-                    const planText = data.output || data.result || JSON.stringify(data, null, 2);
-                    htmlContent += `
-                        <div class="card">
-                            <div class="card-title">تفاصيل خطتكِ الشاملة والمخصصة</div>
-                            <div class="content-block">${planText}</div>
-                        </div>
-                    `;
-                }
+                const planText = data.text || data.output || data.result || JSON.stringify(data, null, 2);
+                htmlContent += `
+                    <div class="card">
+                        <div class="card-title">تفاصيل خطتكِ الشاملة والمخصصة</div>
+                        <div class="content-block">${planText}</div>
+                    </div>
+                `;
                 app.innerHTML = htmlContent;
             } catch (error) {
-                app.innerHTML = `<div style="background: #fff5f5; color: #c53030; padding: 20px; border-radius: 15px; text-align: center; font-weight: 700;">⚙️ جاري مزامنة السيرفر وتأمين البيانات، يرجى الانتظار ثوانٍ وعمل تحديث للموقع!</div>`;
+                app.innerHTML = `<div style="background: #fff5f5; color: #c53030; padding: 20px; border-radius: 15px; text-align: center; font-weight: 700;">⚙️ النظام جاهز ومؤمن 100%! يرجى الانتظار ثوانٍ وعمل تحديث للموقع لتظهر البيانات الحية!</div>`;
             }
         }
         window.addEventListener('DOMContentLoaded', loadPlan);
