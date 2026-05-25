@@ -34,8 +34,8 @@
         async function loadPlan() {
             const app = document.getElementById('app');
             try {
-                // التوجيه الصحيح والمباشر لقراءة الملف من داخل مجلد api
-                const response = await fetch('./api/final_plan.json');
+                // القراءة المباشرة من الجذر الخارجي للمستودع لتجنب حظر مجلد api
+                const response = await fetch('./final_plan.json');
                 if (!response.ok) throw new Error();
                 const data = await response.json();
                 
@@ -46,9 +46,7 @@
                     </header>
                 `;
 
-                // استخراج النص بذكاء مهما كان هيكل الـ JSON المرفوع
                 const planText = data.text || data.output || data.result || (data.choices && data.choices[0]?.message?.content) || JSON.stringify(data, null, 2);
-                
                 htmlContent += `
                     <div class="card">
                         <div class="card-title">تفاصيل خطتكِ الشاملة والمخصصة</div>
@@ -57,7 +55,7 @@
                 `;
                 app.innerHTML = htmlContent;
             } catch (error) {
-                app.innerHTML = `<div style="background: #fff5f5; color: #c53030; padding: 20px; border-radius: 15px; text-align: center; font-weight: 700;">⚙️ لم يتم العثور على ملف البيانات الحية داخل مجلد api، تأكدي من أن الملف موجود ومسمى بالملي final_plan.json!</div>`;
+                app.innerHTML = `<div style="background: #fff5f5; color: #c53030; padding: 20px; border-radius: 15px; text-align: center; font-weight: 700;">⚙️ الكود جاهز! متبقي فقط نقل ملف final_plan.json ليكون في الخارج بجانب ملف index.html مباشرة!</div>`;
             }
         }
         window.addEventListener('DOMContentLoaded', loadPlan);
