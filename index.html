@@ -29,15 +29,15 @@
 </head>
 <body>
     <div class="container" id="app">
-        <div class="loading">جاري تحميل خطتكِ الفخمة والمخصصة آمنياً... ✨</div>
+        <div class="loading">جاري تحميل خطتكِ الفخمة والمخصصة بشكل آمن... ✨</div>
     </div>
 
     <script>
         async function loadPlan() {
             const app = document.getElementById('app');
             try {
-                // جلب البيانات من السيرفر الآمن الداخلي المتصل بـ n8n مباشرة وبدون وسيط
-                const response = await fetch('./final_plan.json');
+                // استدعاء الخادم المصغر الجديد والآمن الذي قمنا ببنائه لتوّنا
+                const response = await fetch('/api/plan');
                 if (!response.ok) throw new Error();
                 const data = await response.json();
                 
@@ -66,8 +66,7 @@
                 }
                 app.innerHTML = htmlContent;
             } catch (error) {
-                // محاولة بديلة ذكية في حال تأخر بناء الخادم
-                app.innerHTML = `<div style="background: #fff5f5; color: #c53030; padding: 20px; border-radius: 15px; text-align: center; font-weight: 700;">⚙️ يتم الآن معالجة وتحديث الملفات على السيرفر الخاص بخصوصية عميلاتكِ، يرجى تحديث الصفحة بعد قليل!</div>`;
+                app.innerHTML = `<div style="background: #fff5f5; color: #c53030; padding: 20px; border-radius: 15px; text-align: center; font-weight: 700;">⚙️ جاري مزامنة السيرفر وتأمين البيانات، يرجى الانتظار ثوانٍ وعمل تحديث للموقع!</div>`;
             }
         }
         window.addEventListener('DOMContentLoaded', loadPlan);
