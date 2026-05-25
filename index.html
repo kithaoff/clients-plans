@@ -35,8 +35,7 @@
             const app = document.getElementById('app');
             try {
                 // استدعاء مباشر كلياً للملف المرفوع في نفس المجلد لضمان قراءته في Vercel
-                const response = await fetch('./final_plan.json');
-                if (!response.ok) throw new Error();
+const response = await fetch('./api/final_plan.json');                if (!response.ok) throw new Error();
                 const data = await response.json();
                 
                 let htmlContent = `
