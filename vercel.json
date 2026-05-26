@@ -1,3 +1,6 @@
 {
-  "cleanUrls": true
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/plan_(:id)", "destination": "/plan_(:id).html" }
+  ]
 }
